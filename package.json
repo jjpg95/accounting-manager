@@ -16,12 +16,9 @@
     "@emotion/styled": "^11.14.0",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
-    "@mui/material": "^6.2.0",
-    "@mui/styled-engine-sc": "^6.2.0",
-    "@mui/x-charts": "^7.23.2",
     "next": "^15.4.7",
     "react": "18.2",
-    "react-dom": "19.2",
+    "react-dom": "18.2",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -31,7 +28,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^18",
-    "@types/react-dom": "^19",
+    "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "jest": "^30.2.0",
