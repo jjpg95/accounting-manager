@@ -1,12 +1,34 @@
+import { Form } from "@/app/components/form";
 import { Modal } from "@/app/components/modal";
-import { useRef, useState } from "react";
+import React, { forwardRef, useRef, useState } from "react";
 
 interface DiaryModalProps {
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
 }
 
-const INPUT_CLASSES = "border rounded-md p-2 max-w-40";
+interface NumericInputProps {
+  placeholder: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  testId: string;
+}
+
+const INPUT_CLASSES = "border rounded-md p-2";
+
+export const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(
+  ({ placeholder, onChange, testId }, ref) => {
+    return (
+      <input
+        type="number"
+        className={INPUT_CLASSES}
+        placeholder={placeholder}
+        onChange={onChange}
+        ref={ref}
+        data-testid={`${testId}-input`}
+      />
+    );
+  }
+);
 
 export const DiaryModal = ({
   isModalOpen,
@@ -23,45 +45,43 @@ export const DiaryModal = ({
   };
 
   const handleNetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const cashValue = parseFloat(cashRef.current?.value || "0") || 0;
-    const creditCardValue =
-      parseFloat(creditCardRef.current?.value || "0") || 0;
-    const expensesValue = parseFloat(expensesRef.current?.value || "0") || 0;
+    const cashValue = parseFloat(cashRef.current?.value || "0");
+    const creditCardValue = parseFloat(creditCardRef.current?.value || "0");
+    const expensesValue = parseFloat(expensesRef.current?.value || "0");
     const netTotal = cashValue + creditCardValue - expensesValue;
     setTotalNet(netTotal);
   };
 
   return (
-    <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-      <form className="grid grid-cols-2 sm:grid-cols-1 gap-4">
-        <input
-          className={INPUT_CLASSES}
-          placeholder="Efectivo"
-          onChange={handleNetChange}
-          ref={cashRef}
-          data-testid="cash-input"
-        />
-        <input
-          className={INPUT_CLASSES}
-          placeholder="Tarjeta"
-          onChange={handleNetChange}
-          ref={creditCardRef}
-          data-testid="credit-card-input"
-        />
-        <input
-          className={INPUT_CLASSES}
-          placeholder="Gastos"
-          onChange={handleNetChange}
-          ref={expensesRef}
-          data-testid="expenses-input"
-        />
-        <input
-          className={INPUT_CLASSES}
-          value={totalNet}
-          disabled={true}
-          data-testid="total-input"
-        />
-      </form>
-    </Modal>
+    <Form
+      isModalOpen={isModalOpen}
+      handleCloseModal={handleCloseModal}
+      title="Registro diario"
+    >
+      <NumericInput
+        placeholder="Efectivo"
+        onChange={handleNetChange}
+        ref={cashRef}
+        testId="cash"
+      />
+      <NumericInput
+        placeholder="Tarjeta"
+        onChange={handleNetChange}
+        ref={creditCardRef}
+        testId="credit-card"
+      />
+      <NumericInput
+        placeholder="Gastos"
+        onChange={handleNetChange}
+        ref={expensesRef}
+        testId="expenses"
+      />
+      <input
+        className={INPUT_CLASSES}
+        value={totalNet}
+        disabled={true}
+        data-testid="total-input"
+      />
+    </Form>
   );
 };
