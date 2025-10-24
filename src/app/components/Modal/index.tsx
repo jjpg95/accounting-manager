@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from 'react';
 
 export interface ModalProps {
   isModalOpen: boolean;
@@ -8,7 +8,7 @@ export interface ModalProps {
 }
 
 const MODAL_CLASSES =
-  "fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50";
+  'fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50';
 
 export const Modal = ({
   isModalOpen,
@@ -49,17 +49,6 @@ export const Modal = ({
           </svg>
         </div>
         {children}
-        <div className="grid grid-cols-2 place-items-center place-content-between pt-4">
-          <button
-            className="bg-blue-600 p-3 border rounded-xl text-white w-fit"
-            onClick={onClose}
-          >
-            Guardar
-          </button>
-          <button className="p-3 border rounded-xl" onClick={onClose}>
-            Cancelar
-          </button>
-        </div>
       </div>
     </div>
   );

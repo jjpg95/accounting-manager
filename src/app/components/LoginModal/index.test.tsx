@@ -29,7 +29,8 @@ describe('LoginModal component', () => {
     expect(form).toBeInTheDocument();
     expect(form).toHaveAttribute('data-title', 'Login');
     expect(form).toHaveAttribute('data-isopen', 'true');
-    expect(screen.getByText('Login Modal Content')).toBeInTheDocument();
+    expect(form.querySelector('input[type="email"]')).toBeInTheDocument();
+    expect(form.querySelector('input[type="password"]')).toBeInTheDocument();
   });
 
   it('calls setIsModalOpen(false) when handleCloseModal is invoked', () => {

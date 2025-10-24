@@ -13,7 +13,7 @@ interface NumericInputProps {
   testId: string;
 }
 
-const INPUT_CLASSES = 'border rounded-md p-2';
+export const INPUT_CLASSES = 'border rounded-md p-2';
 
 export const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(
   ({ placeholder, onChange, testId }, ref) => {
@@ -56,6 +56,7 @@ export const DiaryModal = ({
     <Form
       isModalOpen={isModalOpen}
       handleCloseModal={handleCloseModal}
+      handleSubmit={() => {}}
       title="Registro diario"
     >
       <NumericInput
