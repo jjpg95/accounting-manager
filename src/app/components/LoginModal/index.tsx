@@ -11,8 +11,13 @@ export const LoginModal = ({
   isModalOpen,
   setIsModalOpen,
 }: LoginModalProps) => {
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setEmail('');
+    setPassword('');
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -24,12 +29,16 @@ export const LoginModal = ({
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        email: 'pepeju95@gmail.com',
-        pass: '1234',
+        email,
+        password,
       }),
     })
       .then((response) => {
         response.json().then(() => {
+          if (!response.ok) {
+            throw new Error('Login failed');
+          }
+
           console.log('Successful login.');
         });
       })
@@ -50,12 +59,16 @@ export const LoginModal = ({
         type="email"
         name="email"
         placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
       />
       <input
         className={INPUT_CLASSES}
         type="password"
         name="password"
         placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
       />
     </Form>
   );

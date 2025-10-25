@@ -32,9 +32,9 @@ class ApiClient {
 
     this.client.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
-        const authToken = this.getAuthTokenSync();
-        if (authToken) {
-          config.headers.Authorization = `Bearer ${authToken}`;
+        const accessToken = this.getAccessTokenSync();
+        if (accessToken) {
+          config.headers.Authorization = `Bearer ${accessToken}`;
         }
         return config;
       },
@@ -44,8 +44,8 @@ class ApiClient {
     this.setupResponseInterceptor();
   }
 
-  private getAuthTokenSync(): string | undefined {
-    return this.cookiesStore.get('authToken')?.value;
+  private getAccessTokenSync(): string | undefined {
+    return this.cookiesStore.get('accessToken')?.value;
   }
 
   private getRefreshTokenSync(): string | undefined {
@@ -104,9 +104,9 @@ class ApiClient {
               token: refreshToken,
             });
 
-            const newAuthToken = response.data.newAuthToken;
-            this.processQueue(null, newAuthToken);
-            originalRequest.headers.Authorization = `Bearer ${newAuthToken}`;
+            const newAccessToken = response.data.newAccessToken;
+            this.processQueue(null, newAccessToken);
+            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
             return this.client(originalRequest);
           } catch (refreshError) {
             this.processQueue(refreshError);

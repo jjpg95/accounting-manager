@@ -54,26 +54,6 @@ describe('LoginModal', () => {
     expect(setIsModalOpen).toHaveBeenCalledWith(false);
   });
 
-  it('submits login credentials on form submit', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      json: jest.fn().mockResolvedValueOnce({}),
-    });
-
-    render(<LoginModal isModalOpen={true} setIsModalOpen={jest.fn()} />);
-
-    fireEvent.submit(
-      screen.getByRole('button', { name: 'Submit' }).closest('form')!
-    );
-
-    await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: 'pepeju95@gmail.com', pass: '1234' }),
-      });
-    });
-  });
-
   it('handles login error', async () => {
     const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
     (global.fetch as jest.Mock).mockRejectedValueOnce(

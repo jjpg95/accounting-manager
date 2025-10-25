@@ -74,10 +74,10 @@ describe('ApiClient', () => {
     );
   });
 
-  it('should set Authorization header if authToken exists', async () => {
+  it('should set Authorization header if accessToken exists', async () => {
     const fakeToken = 'abc123';
     cookiesStore.get.mockImplementation((name) =>
-      name === 'authToken' ? ({ value: fakeToken } as any) : undefined
+      name === 'accessToken' ? ({ value: fakeToken } as any) : undefined
     );
 
     const client = mockedAxios.create.mock.results[0].value;
@@ -90,9 +90,9 @@ describe('ApiClient', () => {
     expect(result.headers.Authorization).toBe(`Bearer ${fakeToken}`);
   });
 
-  it('should NOT set Authorization header if authToken is missing (L.42)', async () => {
+  it('should NOT set Authorization header if accessToken is missing (L.42)', async () => {
     cookiesStore.get.mockImplementation((name) =>
-      name === 'authToken' ? undefined : undefined
+      name === 'accessToken' ? undefined : undefined
     );
 
     const client = mockedAxios.create.mock.results[0].value;
@@ -200,7 +200,7 @@ describe('ApiClient', () => {
 
     it('should use fallback baseURL when client.defaults.baseURL is missing (L.99)', async () => {
       const refreshToken = 'refresh123';
-      const newAuthToken = 'newToken456';
+      const newAccessToken = 'newToken456';
 
       cookiesStore.get.mockImplementation((name) =>
         name === 'refreshToken' ? ({ value: refreshToken } as any) : undefined
@@ -213,7 +213,9 @@ describe('ApiClient', () => {
 
       (apiClient as any).client.defaults.baseURL = undefined;
 
-      mockedAxios.post.mockResolvedValue({ data: { newAuthToken } });
+      mockedAxios.post.mockResolvedValue({
+        data: { newAccessToken: newAccessToken },
+      });
       (apiClient as any).client.mockResolvedValue({ data: 'ok' });
 
       const responseInterceptor = (apiClient as any).client.interceptors
@@ -239,7 +241,7 @@ describe('ApiClient', () => {
 
     it('should refresh token and retry original request on 401', async () => {
       const refreshToken = 'refresh123';
-      const newAuthToken = 'newToken456';
+      const newAccessToken = 'newToken456';
       cookiesStore.get.mockImplementation((name) =>
         name === 'refreshToken' ? ({ value: refreshToken } as any) : undefined
       );
@@ -249,7 +251,9 @@ describe('ApiClient', () => {
         config: { headers: {}, url: '/foo' },
       };
 
-      mockedAxios.post.mockResolvedValue({ data: { newAuthToken } });
+      mockedAxios.post.mockResolvedValue({
+        data: { newAccessToken: newAccessToken },
+      });
       client.mockResolvedValue({ data: 'ok' });
 
       const responseInterceptor =
@@ -314,7 +318,7 @@ describe('ApiClient', () => {
 
     it('should process and retry all queued requests on successful refresh', async () => {
       const refreshToken = 'refresh123';
-      const newAuthToken = 'newToken456';
+      const newAccessToken = 'newToken456';
 
       cookiesStore.get.mockImplementation((name) =>
         name === 'refreshToken' ? ({ value: refreshToken } as any) : undefined
@@ -344,7 +348,7 @@ describe('ApiClient', () => {
         .mockResolvedValueOnce({ data: 'ok_queue' })
         .mockResolvedValueOnce({ data: 'ok_init' });
 
-      resolveRefresh({ data: { newAuthToken } });
+      resolveRefresh({ data: { newAccessToken: newAccessToken } });
 
       const [result1, result2] = await Promise.all([p1_init, p2_queued]);
 

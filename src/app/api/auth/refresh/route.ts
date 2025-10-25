@@ -1,38 +1,35 @@
-// src/app/api/auth/login/route.ts
-
-import { NextResponse } from 'next/server';
-import ApiClient from '../../api';
 import { cookies } from 'next/headers';
+import ApiClient from '../../api';
+import { LoginResponse } from '../login/route';
 import { setAccessTokens } from '@/app/lib/helpers/auth';
-
-export interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-}
 
 export async function POST(request: Request) {
   const cookiesStore = await cookies();
   const apiClient = new ApiClient(cookiesStore);
 
   try {
-    const { email, password } = await request.json();
+    const oldRefreshToken = cookiesStore.get('refreshToken');
 
-    const response = await apiClient.post<LoginResponse>('/auth/login', {
-      email,
-      password,
+    const response = await apiClient.post<LoginResponse>('/auth/refresh', {
+      refreshToken: oldRefreshToken?.value,
     });
 
     const accessToken = response.data?.accessToken;
     const refreshToken = response.data?.refreshToken;
     await setAccessTokens(accessToken, refreshToken);
 
-    return NextResponse.json(response.data, { status: response.status });
+    return new Response(JSON.stringify(response.data), {
+      status: response.status,
+      headers: { 'Content-Type': 'application/json' },
+    });
   } catch (error: any) {
     console.error('API Route Error:', error.message);
 
     const status = error.response?.status || 500;
     const message = error.response?.data?.message || 'Internal Server Error';
-
-    return NextResponse.json({ error: message }, { status });
+    return new Response(JSON.stringify({ error: message }), {
+      status,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }

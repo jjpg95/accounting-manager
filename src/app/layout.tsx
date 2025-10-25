@@ -2,7 +2,7 @@ import React from 'react';
 import './globals.css';
 import { Metadata } from 'next';
 import Nav from '@/app/components/Nav';
-import { LoginModalProvider } from './context/LoginModalContext';
+import AppProviders from './components/AppProviders';
 
 export const metadata: Metadata = {
   title: 'Your personal accounting',
@@ -17,12 +17,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full bg-white">
       <body className="h-full">
-        <LoginModalProvider>
+        <AppProviders>
           <Nav />
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             {children}
           </div>
-        </LoginModalProvider>
+        </AppProviders>
       </body>
     </html>
   );
