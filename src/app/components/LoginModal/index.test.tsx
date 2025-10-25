@@ -1,43 +1,98 @@
 import React from 'react';
-import '@testing-library/jest-dom';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { LoginModal } from './index';
 
-jest.mock('@/app/components/Form', () => {
-  return {
-    Form: ({ isModalOpen, handleCloseModal, title, children }: any) => (
-      <div
-        data-testid="mock-form"
-        data-isopen={String(isModalOpen)}
-        data-title={title}
-      >
-        <button data-testid="mock-close-btn" onClick={handleCloseModal}>
-          Close
-        </button>
-        {children}
-      </div>
-    ),
-  };
-});
+let logSpy: jest.SpyInstance;
 
-describe('LoginModal component', () => {
-  it('renders the Form with provided title, isModalOpen and children', () => {
-    const setIsModalOpen = jest.fn();
-    render(<LoginModal isModalOpen={true} setIsModalOpen={setIsModalOpen} />);
+jest.mock('@/app/components/Form', () => ({
+  Form: ({
+    isModalOpen,
+    handleCloseModal,
+    handleSubmit,
+    title,
+    children,
+  }: any) => (
+    <div data-testid="form-mock">
+      {isModalOpen && (
+        <form onSubmit={handleSubmit}>
+          <h2>{title}</h2>
+          {children}
+          <button type="button" onClick={handleCloseModal}>
+            Close
+          </button>
+          <button type="submit">Submit</button>
+        </form>
+      )}
+    </div>
+  ),
+}));
 
-    const form = screen.getByTestId('mock-form');
-    expect(form).toBeInTheDocument();
-    expect(form).toHaveAttribute('data-title', 'Login');
-    expect(form).toHaveAttribute('data-isopen', 'true');
-    expect(form.querySelector('input[type="email"]')).toBeInTheDocument();
-    expect(form.querySelector('input[type="password"]')).toBeInTheDocument();
+global.fetch = jest.fn();
+
+describe('LoginModal', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
   });
 
-  it('calls setIsModalOpen(false) when handleCloseModal is invoked', () => {
+  it('renders the modal when isModalOpen is true', () => {
+    render(<LoginModal isModalOpen={true} setIsModalOpen={jest.fn()} />);
+    expect(screen.getByTestId('form-mock')).toBeInTheDocument();
+    expect(screen.getByText('Login')).toBeInTheDocument();
+  });
+
+  it('does not render the modal when isModalOpen is false', () => {
+    render(<LoginModal isModalOpen={false} setIsModalOpen={jest.fn()} />);
+    expect(screen.queryByText('Login')).not.toBeInTheDocument();
+  });
+
+  it('calls setIsModalOpen with false when close button is clicked', () => {
     const setIsModalOpen = jest.fn();
     render(<LoginModal isModalOpen={true} setIsModalOpen={setIsModalOpen} />);
 
-    fireEvent.click(screen.getByTestId('mock-close-btn'));
+    fireEvent.click(screen.getByText('Close'));
     expect(setIsModalOpen).toHaveBeenCalledWith(false);
+  });
+
+  it('submits login credentials on form submit', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      json: jest.fn().mockResolvedValueOnce({}),
+    });
+
+    render(<LoginModal isModalOpen={true} setIsModalOpen={jest.fn()} />);
+
+    fireEvent.submit(
+      screen.getByRole('button', { name: 'Submit' }).closest('form')!
+    );
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: 'pepeju95@gmail.com', pass: '1234' }),
+      });
+    });
+  });
+
+  it('handles login error', async () => {
+    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+    (global.fetch as jest.Mock).mockRejectedValueOnce(
+      new Error('Network error')
+    );
+
+    render(<LoginModal isModalOpen={true} setIsModalOpen={jest.fn()} />);
+
+    fireEvent.submit(
+      screen.getByRole('button', { name: 'Submit' }).closest('form')!
+    );
+
+    await waitFor(() => {
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        'Login error:',
+        expect.any(Error)
+      );
+    });
+
+    consoleLogSpy.mockRestore();
   });
 });

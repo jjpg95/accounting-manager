@@ -45,8 +45,18 @@ export const LoginModal = ({
       handleSubmit={handleSubmit}
       title="Login"
     >
-      <input className={INPUT_CLASSES} type="email" />
-      <input className={INPUT_CLASSES} type="password" />
+      <input
+        className={INPUT_CLASSES}
+        type="email"
+        name="email"
+        placeholder="Email"
+      />
+      <input
+        className={INPUT_CLASSES}
+        type="password"
+        name="password"
+        placeholder="Password"
+      />
     </Form>
   );
 };

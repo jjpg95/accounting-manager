@@ -1,5 +1,4 @@
 import { Form } from '@/app/components/Form';
-import { Modal } from '@/app/components/Modal';
 import React, { forwardRef, useRef, useState } from 'react';
 
 interface DiaryModalProps {
