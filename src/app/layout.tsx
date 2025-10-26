@@ -15,11 +15,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full bg-white">
-      <body className="h-full">
+    <html lang="en">
+      <body>
         <AppProviders>
-          <Nav />
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white">
+            <Nav />
             {children}
           </div>
         </AppProviders>

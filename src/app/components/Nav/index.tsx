@@ -11,10 +11,10 @@ export default function Nav() {
   };
 
   return (
-    <div className="bg-blue-700 p-2 flex justify-center">
+    <header className="flex z-50 border-b border-gray-300 border-solid h-16 top-0 inset-x-0 absolute">
       <button onClick={handleLoginModalOpen}>
         <Image src="/notLogged.svg" alt="Login" width={40} height={40} />
       </button>
-    </div>
+    </header>
   );
 }
