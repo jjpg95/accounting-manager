@@ -67,6 +67,7 @@ describe('Nav', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    consoleErrorSpy.mockRestore();
   });
 
   it('renders the login image button', () => {
@@ -82,7 +83,7 @@ describe('Nav', () => {
   it('opens the login modal when the login button is clicked', () => {
     renderComponent(false);
 
-    const button = screen.getByRole('button');
+    const button = screen.getByRole('button', { name: /Login/i });
     fireEvent.click(button);
 
     expect(mockSetIsLoginModalOpen).toHaveBeenCalledWith(true);
@@ -101,7 +102,7 @@ describe('Nav', () => {
   it('calls logout function when the logged in button is clicked', () => {
     renderComponent(true);
 
-    const button = screen.getByRole('button');
+    const button = screen.getByRole('button', { name: /Logout/i });
     fireEvent.click(button);
 
     expect(global.fetch).toHaveBeenCalledWith('/api/auth/logout', {
@@ -116,7 +117,7 @@ describe('Nav', () => {
 
     renderComponent(true);
 
-    const button = screen.getByRole('button');
+    const button = screen.getByRole('button', { name: /Logout/i });
     fireEvent.click(button);
 
     expect(global.fetch).toHaveBeenCalledWith('/api/auth/logout', {
