@@ -15,7 +15,7 @@ const customJestConfig = {
   collectCoverageFrom: [
     'src/app/**/*.{js,jsx,ts,tsx}', // Check all JS/TS/JSX/TSX files under src/app
     '!src/app/**/layout.tsx', // Optional: Exclude files that are difficult/unnecessary to test
-    '!src/app/**/globals.css', // Optional: Exclude CSS files
+    '!src/app/**/globals.css',
     '!src/app/**/route.ts', // Optional: Exclude API routes
     '!**/*.d.ts', // Standard: Exclude TypeScript definition files
   ],
